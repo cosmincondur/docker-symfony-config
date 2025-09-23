@@ -1,6 +1,4 @@
-# docker-symfony-config
-
-## 🚀 Useful Docker Commands
+# 🚀 Useful Docker Commands
 
 These are helpful commands to manage your development environment.
 
