@@ -1,45 +1,36 @@
-FROM php:8.3-fpm-alpine as app
+FROM php:8.4-fpm as app
 
 # Useful PHP extension installer image, copy binary into your container
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-# RUN docker-php-ext-istall pdo pdo_mysql
+# Install PHP extensions
 RUN set -eux; \
     install-php-extensions \
-    # Basic requirements for Symfony and Doctrine
     pdo \
     pdo_mysql \
-    # Or pdo_pgsql if you use PostgreSQL
-    # pdo_pgsql \
-    # Required for many Symfony components and libraries
     intl \
     zip \
     gd \
-    # For caching and session management
     opcache \
     apcu \
-    # For cURL requests (e.g., HTTP clients, API integrations)
     curl \
-    # For JSON handling (essential for APIs)
     json \
-    # For XML processing (e.g., some configurations, third-party libraries)
     xml \
-    # For mb_string functions (multibyte string handling)
     mbstring \
-    # For YAML parsing (e.g., Symfony configurations)
     yaml \
     xsl \
-    # For Xdebug (useful for debugging, remove in production)
-    # xdebug \
-    # If you use Redis for caching or sessions
-    # redis \
     ;
+
+# Install curl, bash, and Symfony CLI
+RUN apt-get update && apt-get install -y curl bash && rm -rf /var/lib/apt/lists/*
+RUN curl -sS https://get.symfony.com/cli/installer | bash
+RUN mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 
 #allow superuser(true), composer as superuser at all the time
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # obtain composer using multi stage build
-COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # we copy only composer files instead of entire source
 COPY ./composer.* ./
