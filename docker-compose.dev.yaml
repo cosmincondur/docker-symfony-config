@@ -1,6 +1,6 @@
 services:
   #nginx
-  web:
+  nginx:
     build:
       dockerfile: ./docker/nginx/Dockerfile
     ports:
@@ -10,7 +10,7 @@ services:
     volumes:
       - ./docker/nginx/conf.d/symfony.conf:/etc/nginx/conf.d/symfony.conf #ourFile:containerFile
   #php
-  app:
+  php:
     build: # here you add docker file to build images
       dockerfile: ./docker/php/Dockerfile #php docker file
       target: "${BUILD_TARGET:-app}"
@@ -31,7 +31,7 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
   #database
-  db:
+  database:
     image: mysql:8.0
     # You can copy files/folder into container
     # We are using here volume mapping
@@ -46,9 +46,22 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: secret
       MYSQL_DATABASE: database_name
+  node:
+    image: node:22
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html:cached
+      # keep node_modules in a named volume to avoid host perms conflicts
+      - node_modules_cache:/var/www/html/node_modules
+    environment:
+      # helps chokidar & Encore detect changes in Docker
+      - CHOKIDAR_USEPOLLING=1
+    command: sh -lc "npm ci && npm run watch"
   #redis
   cache:
     image: redis:latest
 
 volumes:
   mysqldata: #docker will figure out how to put the data
+  node_modules_cache:
+
