@@ -1,0 +1,54 @@
+services:
+  #nginx
+  web:
+    build:
+      dockerfile: ./docker/nginx/Dockerfile
+    ports:
+      - "8080:80" #first is port on my machine/second is on docker
+    # You can copy files/folder into container
+    # We are using here volume mapping
+    volumes:
+      - ./docker/nginx/conf.d/symfony.conf:/etc/nginx/conf.d/symfony.conf #ourFile:containerFile
+  #php
+  app:
+    build: # here you add docker file to build images
+      dockerfile: ./docker/php/Dockerfile #php docker file
+      target: "${BUILD_TARGET:-app}"
+    # You can copy files/folder into container
+    # We are using here volume mapping
+    volumes:
+      - ./:/var/www/html #ourFile:#containerFile
+      - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro #ro is read only
+    environment:
+      MYSQL_HOST: db
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      REDIS_HOST: cache
+      REDIS_PORT: ${REDIS_PORT}
+      XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+  #database
+  db:
+    image: mysql:8.0
+    # You can copy files/folder into container
+    # We are using here volume mapping
+    # So we dont lose the data
+    volumes:
+      - mysqldata:/var/lib/mysql #docker will decide how he puts data, /path is in container
+    ports:
+      - "3306:3306" #choose another port if db is running in your machine(first)
+    restart: unless-stopped #make sure is up all the time
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_USER: user
+      MYSQL_PASSWORD: secret
+      MYSQL_DATABASE: database_name
+  #redis
+  cache:
+    image: redis:latest
+
+volumes:
+  mysqldata: #docker will figure out how to put the data
