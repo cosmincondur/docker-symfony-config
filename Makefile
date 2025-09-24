@@ -1,5 +1,5 @@
 # Makefile - Basic Docker command wrappers
-.PHONY: sf composer php mysql bash cache migrate
+.PHONY: sf composer php pc mysql bash cache migrate npm dev watch build
 
 # Symfony console
 sf:
@@ -13,9 +13,9 @@ composer:
 php:
 	docker compose exec php php $(filter-out $@,$(MAKECMDGOALS))
 
-# Node.js commands
-npm:
-	docker compose exec php npm $(filter-out $@,$(MAKECMDGOALS))
+# PHP Console (Symfony)
+pc:
+	docker compose exec php symfony console $(filter-out $@,$(MAKECMDGOALS))
 
 # Database
 mysql:
@@ -23,14 +23,27 @@ mysql:
 
 # Shell access
 bash:
-	docker compose exec app bash
+	docker compose exec php bash
+
+# Node.js commands
+npm:
+	docker compose exec php npm $(filter-out $@,$(MAKECMDGOALS))
 
 # Common shortcuts
 cache:
-	docker compose exec app php bin/console cache:clear
+	docker compose exec php symfony console cache:clear
 
 migrate:
-	docker compose exec app php bin/console doctrine:migrations:migrate
+	docker compose exec php symfony console doctrine:migrations:migrate
+
+dev:
+	docker compose exec php npm run dev
+
+watch:
+	docker compose exec php npm run watch
+
+build:
+	docker compose exec php npm run build
 
 # Prevent make from treating arguments as targets
 %:
