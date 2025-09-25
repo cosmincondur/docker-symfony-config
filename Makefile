@@ -2,7 +2,7 @@
 .PHONY: sf composer php pc mysql bash cache migrate npm dev watch build
 
 # Symfony console
-sf:
+sc:
 	docker compose exec php symfony console $(filter-out $@,$(MAKECMDGOALS))
 
 # Composer
@@ -15,11 +15,11 @@ php:
 
 # PHP Console (Symfony)
 pc:
-	docker compose exec php symfony console $(filter-out $@,$(MAKECMDGOALS))
+	docker compose exec php php bin/console $(filter-out $@,$(MAKECMDGOALS))
 
 # Database
 mysql:
-	docker compose exec db mysql -u root -p
+	docker compose exec database mysql -u root -p
 
 # Shell access
 bash:
@@ -27,23 +27,27 @@ bash:
 
 # Node.js commands
 npm:
-	docker compose exec php npm $(filter-out $@,$(MAKECMDGOALS))
+	docker compose exec node npm $(filter-out $@,$(MAKECMDGOALS))
 
 # Common shortcuts
 cache:
 	docker compose exec php symfony console cache:clear
 
-migrate:
-	docker compose exec php symfony console doctrine:migrations:migrate
+# Common shortcuts
+cache:
+	docker compose exec php symfony console cache:clear
+
+migration:
+	docker compose exec php symfony console make:migration
 
 dev:
-	docker compose exec php npm run dev
+	docker compose exec node npm run dev
 
 watch:
-	docker compose exec php npm run watch
+	docker compose exec node npm run watch
 
 build:
-	docker compose exec php npm run build
+	docker compose exec node npm run build
 
 # Prevent make from treating arguments as targets
 %:
