@@ -9,6 +9,7 @@ services:
     # We are using here volume mapping
     volumes:
       - ./docker/nginx/conf.d/symfony.conf:/etc/nginx/conf.d/symfony.conf #ourFile:containerFile
+      - ./public:/var/www/html/public:ro # Nginx must see public/ to serve assets
   #php
   php:
     build: # here you add docker file to build images
