@@ -48,7 +48,9 @@ services:
       MYSQL_PASSWORD: secret
       MYSQL_DATABASE: database_name
   node:
-    image: node:22
+    build:
+      #Choose your file : ./docker/node/yarn/Dockerfile or ./docker/node/npm/Dockerfile
+      dockerfile: ./docker/node/npm/Dockerfile
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html:cached
@@ -57,8 +59,7 @@ services:
     environment:
       # helps chokidar & Encore detect changes in Docker
       - CHOKIDAR_USEPOLLING=1
-    command: sh -lc "npm ci && npm run watch"
-    #command: sh -c "yarn install && yarn start"
+      - NODE_OPTIONS=--openssl-legacy-provider
   #redis
   cache:
     image: redis:latest
