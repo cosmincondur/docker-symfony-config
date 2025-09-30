@@ -58,6 +58,7 @@ services:
       # helps chokidar & Encore detect changes in Docker
       - CHOKIDAR_USEPOLLING=1
     command: sh -lc "npm ci && npm run watch"
+    #command: sh -c "yarn install && yarn start"
   #redis
   cache:
     image: redis:latest
