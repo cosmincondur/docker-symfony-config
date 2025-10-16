@@ -9,7 +9,22 @@ services:
     # We are using here volume mapping
     volumes:
       - ./docker/nginx/conf.d/symfony.conf:/etc/nginx/conf.d/symfony.conf #ourFile:containerFile
-      - ./public:/var/www/html/public:ro # Nginx must see public/ to serve assets
+      - ./public:/var/www/html/public # Nginx must see public/ to serve assets
+  #email
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
   #php
   php:
     build: # here you add docker file to build images
