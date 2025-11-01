@@ -40,6 +40,9 @@ cache:
 migration:
 	docker compose exec php symfony console make:migration
 
+tailwind-watch:
+	docker compose exec php bin/console tailwind:build --watch
+
 migrate:
 	docker compose exec php symfony console doctrine:migrations:migrate
 
