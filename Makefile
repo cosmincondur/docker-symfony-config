@@ -40,6 +40,9 @@ cache:
 migration:
 	docker compose exec php symfony console make:migration
 
+migrate:
+	docker compose exec php symfony console doctrine:migrations:migrate
+
 dev:
 	docker compose exec node npm run dev
 
