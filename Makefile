@@ -46,13 +46,19 @@ tailwind-watch:
 migrate:
 	docker compose exec php symfony console doctrine:migrations:migrate
 
-dev:
+npm-dev:
 	docker compose exec node npm run dev
 
-watch:
+npm-watch:
 	docker compose exec node npm run watch
 
-build:
+yarn-watch:
+	docker compose exec node yarn run watch
+
+yarn-dev:
+	docker compose exec node yarn dev
+
+npm-build:
 	docker compose exec node npm run build
 
 # Prevent make from treating arguments as targets
