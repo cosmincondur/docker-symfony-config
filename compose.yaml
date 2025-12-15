@@ -69,7 +69,7 @@ services:
     volumes:
       - ./:/var/www/html:cached
       # keep node_modules in a named volume to avoid host perms conflicts
-      - node_modules_cache:/var/www/html/node_modules
+      - node_modules:/var/www/html/node_modules
     environment:
       # helps chokidar & Encore detect changes in Docker
       - CHOKIDAR_USEPOLLING=1
@@ -80,5 +80,5 @@ services:
 
 volumes:
   mysqldata: #docker will figure out how to put the data
-  node_modules_cache:
+  node_modules:
 
